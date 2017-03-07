@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/UC_w3_klasvoorbeeld/UC_w3_klasvoorbeeld/UC_w3_klasvoorbeeld.iml" filepath="$PROJECT_DIR$/UC_w3_klasvoorbeeld/UC_w3_klasvoorbeeld/UC_w3_klasvoorbeeld.iml" />
       <module fileurl="file://$PROJECT_DIR$/opgave_elementen/opgave_elementen.iml" filepath="$PROJECT_DIR$/opgave_elementen/opgave_elementen.iml" />
     </modules>
   </component>
