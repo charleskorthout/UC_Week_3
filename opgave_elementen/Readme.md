@@ -88,7 +88,7 @@ Override hiertoe de equals methode om aan te tonen of 2 persoon objecten gelijk 
     
 ```
 Test Resultaat
-![Test results](..\img/2017-03-07_20-04-27.png "test resultaat" )
+![Test results](https://github.com/charleskorthout/UC_Week_3/tree/master/opgave_elementen/img/2017-03-07_20-04-27.png "test resultaat" )
 ## Opdracht 1.2 
 Breidt je specificatie en dus bovenstaande unittesten uit zodat ze voldoen aan de standaard eisen die aan equals gesteld worden (zie javadoc/voorbeeldcode klas). Gebruik hiertoe ook de gegeven klasse EqualsUtils.
 
