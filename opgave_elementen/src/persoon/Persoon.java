@@ -1,5 +1,7 @@
 package persoon;
 
+import ObjectUtils.CompareToUtils;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -50,8 +52,15 @@ public class Persoon implements Comparable {
      */
     @Override
     public int compareTo(Object t) {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //Todo
+        if (!(t instanceof Persoon)) return this.compareTo(t);
+        else {
+                Persoon p = (Persoon) t;
+                if (!(CompareToUtils.nullSafeComparator(birthDate,p.birthDate) == 0)) return CompareToUtils.nullSafeComparator(birthDate,p.birthDate);
+                else {
+                    if (!(CompareToUtils.nullSafeComparator(familyname,p.familyname)==0)) return CompareToUtils.nullSafeComparator(familyname,p.familyname);
+                    else return CompareToUtils.nullSafeComparator(firstname,p.firstname);
+                }
+        }
     }
 
     /**

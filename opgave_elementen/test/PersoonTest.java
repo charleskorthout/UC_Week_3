@@ -5,6 +5,7 @@
  */
 
 
+import ObjectUtils.CompareToUtils;
 import ObjectUtils.EqualsUtils;
 import java.util.Date;
 import org.junit.After;
@@ -87,15 +88,19 @@ public class PersoonTest {
 //        fail("The test case is a prototype.");
 //    }
 //
-//        /**
-//     * Test of compareTo method, of class Persoon.
-//     */
-//    @Test
-//    public void testCompareTo() {
-//        // use CompareToUtils for tests
-//        // TODO
-//        fail("The test case is a prototype.");
-//    }
-
-    
+    /**
+     * Test of compareTo method, of class Persoon.
+     */
+    @Test
+    public void testCompareTo() {
+        // use CompareToUtils for tests
+        // ensure 1. sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) for all x and y.
+        assertTrue(CompareToUtils.testComparisonReversal(p1,p2));
+        // ensure 2. (x.compareTo(y)>0 && y.compareTo(z)>0) -> x.compareTo(z)>0.
+        assertTrue(CompareToUtils.testTransitivity(p4,p1,p2));
+        // 4. if x.compareTo(y) throws an exception then also y.compareTo(x)
+        assertTrue(CompareToUtils.testNullPointerException(p1,p2));
+        // 5. preferrably consistent with equals: (e1.compareTo(e2) == 0) == (e1.equals(e2))
+        assertTrue(CompareToUtils.testConsistencyWithEqual(p1,p2));
+    }
 }
