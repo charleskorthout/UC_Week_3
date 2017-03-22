@@ -622,6 +622,55 @@ We hebben nu voldoende munitie om alle unit testen te laten slagen.
 ## Opdracht 1.3
 Maak unittesten om add, contains, delete/remove en size te testen als je bovenstaande Persoon objecten in een List implementatie stopt. Verklaar het gedrag dat je ziet en pas je tests en code aan indien nodig. Hou bij welke wijzigingen je uitgevoerd hebt.
 
+### initialisatie van lijst
+```java
+import java.util.List;
+
+List<IPersoon> personen;
+
+@Before
+    public void setUp() {
+        Date d = new Date(-98011418);
+        Date d2 = new Date(System.currentTimeMillis());
+        Date d3 = new Date(-77777777);
+
+        p1 = new Persoon("schriek","erik",d,"home","here");
+        p2 = new Persoon("toma","tim",d,"home","here");
+        p3 = new Student(1,"toma","tim",d,"home","here");
+        p4 = new Student(2,"newton","newey",d2,"out","there");
+        p5 = new Docent(10,"schriek","erik",d,"home","here");
+        p6 = new Docent(20,"kuijpers","nico",d3,"home","there");
+        // added one to check transitivity rule, erik becomes also a student ;-)
+        p7 = new Student(1,"schriek","erik",d,"home","here");
+
+        //initialize personen
+        personen = new ArrayList<>();
+    }
+        
+```
+
+De eerste test is of we personen toe kunnen voegen tot de lijst. In bovenstaande hebben we 2 implementaties van het type Persoon.
+
+``` java
+/**
+     * Simpel test if we can add an person
+     */
+    @Test
+    public void testAddPersonToList(){
+        int expected = 1;
+        personen.add(p1);
+        int actual = personen.size();
+        assertEquals(expected,  actual);
+        expected = 2;
+        personen.add(p2);
+        actual = personen.size();
+        assertEquals(expected,  actual);
+    }
+```
+Het volgende screenshot toont het resultaat
+
+![ ](./img/2017-03-22_22-52-30.jpg) 
+
 ## Opdracht 1.4
 Stop nu de bovenstaande Objecten uit 1.1 in een HashSet implementatie. Maak een unittest om te laten zien of bovenstaande methoden van de collectie ook werken (Voeg hiertoe methoden toe in HashCodeUtils om het hashcode contract aan te tonen, en gebruik deze in je tests.). 
 Verklaar het gedrag dat je ziet en pas je tests en code aan indien nodig. Hou bij welke wijzigingen je uitgevoerd hebt.

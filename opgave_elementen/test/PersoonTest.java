@@ -7,7 +7,10 @@
 
 import ObjectUtils.CompareToUtils;
 import ObjectUtils.EqualsUtils;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import ObjectUtils.HashCodeUtils;
 import org.junit.After;
@@ -28,6 +31,7 @@ import persoon.IPersoon;
 public class PersoonTest {
 
     IPersoon p1, p2, p3, p4, p5, p6, p7;
+    List<IPersoon> personen;
 
     public PersoonTest() {
     }
@@ -54,7 +58,9 @@ public class PersoonTest {
         p6 = new Docent(20,"kuijpers","nico",d3,"home","there");
         // added one to check transitivity rule, erik becomes also a student ;-)
         p7 = new Student(1,"schriek","erik",d,"home","here");
-        
+
+        //initialize personen
+        personen = new ArrayList<>();
     }
         
 
@@ -108,5 +114,20 @@ public class PersoonTest {
         assertTrue(CompareToUtils.testNullPointerException(p1,p2));
         // 5. preferrably consistent with equals: (e1.compareTo(e2) == 0) == (e1.equals(e2))
         assertTrue(CompareToUtils.testConsistencyWithEqual(p1,p2));
+    }
+
+    /**
+     * Simpel test if we can add an person
+     */
+    @Test
+    public void testAddPersonToList(){
+        int expected = 1;
+        personen.add(p1);
+        int actual = personen.size();
+        assertEquals(expected,  actual);
+        expected = 2;
+        personen.add(p2);
+        actual = personen.size();
+        assertEquals(expected,  actual);
     }
 }
