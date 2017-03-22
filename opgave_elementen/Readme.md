@@ -14,6 +14,91 @@ Override hiertoe de equals methode om aan te tonen of 2 persoon objecten gelijk 
 -hun bsn en hun firstname and familyname hetzelfde zijn.
 -hun firstname, familyname, birthdate, birthplace and birthcountry hetzelfde zijn.
 
+### Unit testen
+
+#### Equals testen
+De equals testen waren al gegeven. 
+``` java
+
+    @Before
+    public void setUp() {
+        Date d = new Date(-98011418);
+        Date d2 = new Date(System.currentTimeMillis());
+        Date d3 = new Date(-77777777);
+
+        p1 = new Persoon("schriek","erik",d,"home","here");
+        p2 = new Persoon("toma","tim",d,"home","here");
+        p3 = new Student(1,"toma","tim",d,"home","here");
+        p4 = new Student(2,"newton","newey",d2,"out","there");
+        p5 = new Docent(10,"schriek","erik",d,"home","here");
+        p6 = new Docent(20,"kuijpers","nico",d3,"home","there");
+        // added one to check transitivity rule, erik becomes also a student ;-)
+        p7 = new Student(1,"schriek","erik",d,"home","here");
+        
+    }
+            
+    /**
+     * Test of equals method, of class Persoon.
+     */
+    @Test
+    public void testEquals() {
+        // test null waarde
+        assertTrue(EqualsUtils.testNullIsFalse(p1));
+        // test reflexiviteit 
+        assertTrue(EqualsUtils.testReflexitivity(p1));
+        // test symmetrie met gelijke waarden
+        assertTrue(EqualsUtils.testSymmetry(p1, p2));
+        // test symmetrie met ongelijke waarden
+        assertTrue(EqualsUtils.testSymmetry(p1, p4));
+        // test transitiviteit met gelijke waarden
+        assertTrue(EqualsUtils.testTransitivity(p1, p5, p7));
+        // test transitiviteit met ongelijke waarden
+        assertTrue(EqualsUtils.testTransitivity(p4, p5, p6));
+    }
+
+```
+#### hashCode testen
+Voor de hashcode volgen we de twee eisen voor de hashCode
+- consistentie
+- als equals gelijk is moet ook de hashcode gelijk zijn (codeEquality)
+
+``` java
+@Test
+    public void testHashCode() {
+        // use HashCodeUtils for tests
+        assertTrue(HashCodeUtils.testHashCodeConsistency(p1));
+        assertTrue(HashCodeUtils.testHashCodeEquality(p1,p1));
+        assertTrue(HashCodeUtils.testHashCodeEquality(p1,p5));
+    }
+```
+
+#### compareTo testen
+
+Voor compareTo volgen we de regels van slide 3
+
+```java
+@Test
+    public void testCompareTo() {
+        // use CompareToUtils for tests
+        // ensure 1. sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) for all x and y.
+        assertTrue(CompareToUtils.testComparisonReversal(p1,p2));
+        // ensure 2. (x.compareTo(y)>0 && y.compareTo(z)>0) -> x.compareTo(z)>0.
+        assertTrue(CompareToUtils.testTransitivity(p4, p6, p1));
+        // 4. if x.compareTo(y) throws an exception then also y.compareTo(x)
+        assertTrue(CompareToUtils.testNullPointerException(p1,p2));
+        // 5. preferrably consistent with equals: (e1.compareTo(e2) == 0) == (e1.equals(e2))
+        assertTrue(CompareToUtils.testConsistencyWithEqual(p1,p2));
+    }
+```
+
+### Persoon
+
+De eerste stap is om de equals voor Persoon in te vullen. De gelijkheid bestaat uit twee fragmenten
+- BSN, firstname en familyname
+- Firstname, familyname,Birthdata, Birthplace, Birthcountry 
+
+laten we die eerst maar in gaan vullen.
+
 ``` java
 
 /**
@@ -88,8 +173,6 @@ Override hiertoe de equals methode om aan te tonen of 2 persoon objecten gelijk 
     
 ```
 
-
-![test resultaat](https://github.com/charleskorthout/UC_Week_3/tree/master/opgave_elementen/img/2017-03-07_20-04-27.png "test resultaat" )
 ## Opdracht 1.2 
 Breidt je specificatie en dus bovenstaande unittesten uit zodat ze voldoen aan de standaard eisen die aan equals gesteld worden (zie javadoc/voorbeeldcode klas). Gebruik hiertoe ook de gegeven klasse EqualsUtils.
 
@@ -316,7 +399,225 @@ public class CompareToUtils {
 
 ```
 
+tijdens het bezoek aan het UC college werd de hint gegeven om een interface te gebruiken voor de uiteindelijke oplossing
 
+De eerste wijzigingen aan de code zijn nu:
+
+#### Persoon.java
+
+``` java
+public class Persoon implements IPersoon{ .. }
+```
+
+#### IPersoon.java
+
+```java
+/**
+ * Created by Charles Korthout on 3/22/2017.
+ */
+public interface IPersoon extends Comparable {
+}
+```
+
+De interface Comparable is nu verplaatst naar het laagste nivo.
+
+De volgende stap is om 1 voor 1 de methodes in de interface te definieren, alle attributen die we nodig hebben in de overervende klasses.
+
+
+``` java 
+    package persoon;
+    
+    import java.util.Date;
+    
+    /**
+     * Created by Charles Korthout on 3/22/2017.
+     */
+    public interface IPersoon extends Comparable {
+    
+        /**
+         * Two persons are equal when:
+         * - their BSN , firstname and familay name are equal
+         * or
+         * - their firstname, familyname, birthdate, birthplace and birthcountry are the sames
+         * @param other The object to compare with
+         * @return the logical value of the compare based on the above conditions
+         */
+        boolean equals(Object other);
+    
+        /**
+         * * Two persons are equal when:
+         * - their BSN , firstname and familay name are equal
+         * or
+         * - their firstname, familyname, birthdate, birthplace and birthcountry are the sames
+         * The Hashcode must align with this, the only two parameters in the set are firstname and last name
+         * @return the hashcode
+         */
+        int hashCode();
+    
+        /**
+         * natuurlijke ordening op birthDate, vervolgens op familyname, vervolgens
+         * op firstname.
+         *
+         * @param other The object to comapre with
+         * @return the result of the compare
+         */
+        int compareTo(Object other);
+    
+        // properties required to enable the compareTo for persoon
+        Date getBirthDate();
+        String getFirstName();
+        String getFamilyName();
+    }
+
+```
+
+De volgende stap is om Persoon, Student en Docent de methodes te laten implementeren.
+
+#### Persoon
+
+De implementatie in Persoon is recht-toe-recht-aan, de attributen zijn in Persoon gedefinieerd.
+
+``` java 
+@Override
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstname;
+    }
+
+    @Override
+    public String getFamilyName() {
+        return familyname;
+    }
+```
+
+Zowel Docent als Student hebben Persoon als attribuut, dus de implementatie van de bovenstaande methodes, kan eenvoudig de methodes van persoon aanroepen.
+
+#### Docent
+``` java 
+
+    private Persoon persoon = null;
+
+    public Docent(long loginAccountNr, String familyname, String firstname, Date birthDate, String birthPlace, String birthCountry) {
+        persoon = new Persoon(familyname, firstname, birthDate, birthPlace, birthCountry);
+        this.loginAccountNr = loginAccountNr;
+    }
+
+    @Override
+    public Date getBirthDate() {
+        return persoon.getBirthDate();
+    }
+
+    @Override
+    public String getFirstName() {
+        return persoon.getFirstName();
+    }
+
+    @Override
+    public String getFamilyName() {
+        return persoon.getFamilyName();
+    }
+
+
+```
+
+#### Student
+
+``` java
+    private Persoon persoon = null;
+
+    public Student(long studentNr, String familyname, String firstname, Date birthDate, String birthPlace, String birthCountry) {
+        persoon = new Persoon(familyname, firstname, birthDate, birthPlace, birthCountry);
+        this.studentNr = studentNr;
+    }
+    
+    @Override
+    public Date getBirthDate() {
+        return persoon.getBirthDate();
+    }
+
+    @Override
+    public String getFirstName() {
+        return persoon.getFirstName();
+    }
+
+    @Override
+    public String getFamilyName() {
+        return persoon.getFamilyName();
+    }
+
+```
+
+
+#### hashCode
+Nu we het geraamte voor de vergelijkingen gemaakt hebben wordt het tijd om e.e.a. in te vullen. De equals hebben we in opdracht 1.1 al uitgewerkt. De hashCode is simpel, de hashcode is de dwarsdoorsnede van de equals, waardoor alleen firstname en familyname overblijven als kandidaat voor de hashCode implementatie binnen Persoon.
+
+```java
+@Override
+    public int hashCode() {
+        return (firstname + familyname).hashCode();        
+    }
+```
+
+#### compareTo
+Tot slot de compareTo methode binnen Persoon. 
+We hebben hier wat hulp nodig om te kunnen werken met "null" waardes. 
+
+```java
+/**
+     * Utility function to compare with null safe
+     * @param x item 1
+     * @param y item 2
+     * @return icompare result
+     */
+    public static int nullSafeComparator(Object x, Object y) {
+        if (x == null ^ y == null) {
+            return (x == null) ? -1 : 1;
+        }
+        if (x == null && y == null) {
+            return 0;
+        }
+        if ((x instanceof Comparable) && (y instanceof Comparable)) {
+            return ((Comparable)x).compareTo((Comparable)y);
+        }
+        else {
+            throw new NotImplementedException(); // should not happen, we are comparing apples and oranges..
+        }
+    }
+
+```
+
+Met deze methode kunnen we nu de body van de compareTo binnen Persoon invullen.
+De methode bestaat uit drie componenten:
+- test op null waarde
+- test op IPersoon
+- exception als de bovenstaande condities niet valideren
+
+```java
+@Override
+    public int compareTo(Object t) {
+        if (null == t) return CompareToUtils.nullSafeComparator(this,t);
+        if (t instanceof IPersoon)
+        {
+                IPersoon p = (IPersoon) t;
+                if (!(CompareToUtils.nullSafeComparator(birthDate,p.getBirthDate()) == 0)) return CompareToUtils.nullSafeComparator(birthDate,p.getBirthDate());
+                else {
+                    if (!(CompareToUtils.nullSafeComparator(familyname,p.getFamilyName())==0)) return CompareToUtils.nullSafeComparator(familyname,p.getFamilyName());
+                    else return CompareToUtils.nullSafeComparator(firstname,p.getFirstName());
+                }
+        }
+        else return CompareToUtils.nullSafeComparator(this,t);
+    }
+
+```
+
+#### Unit testen
+We hebben nu voldoende munitie om alle unit testen te laten slagen.
+
+![testresultaat]("/img/2017-03-22_22-06-56.jpg" )
 ## Opdracht 1.3
 Maak unittesten om add, contains, delete/remove en size te testen als je bovenstaande Persoon objecten in een List implementatie stopt. Verklaar het gedrag dat je ziet en pas je tests en code aan indien nodig. Hou bij welke wijzigingen je uitgevoerd hebt.
 

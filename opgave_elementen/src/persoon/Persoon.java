@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author erik
  */
-public class Persoon implements Comparable {
+public class Persoon implements IPersoon{
 
     private long BSN; // burgerservicenummer
     private String familyname; // familie naam
@@ -43,24 +43,34 @@ public class Persoon implements Comparable {
                 + "," + this.birthPlace + " ," + this.birthCountry;
     }
 
-    /**
-     * natuurlijke ordening op birthDate, vervolgens op familyname, vervolgens
-     * op firstname.
-     *
-     * @param t
-     * @return
-     */
     @Override
     public int compareTo(Object t) {
-        if (!(t instanceof Persoon)) return this.compareTo(t);
-        else {
-                Persoon p = (Persoon) t;
-                if (!(CompareToUtils.nullSafeComparator(birthDate,p.birthDate) == 0)) return CompareToUtils.nullSafeComparator(birthDate,p.birthDate);
+        if (null == t) return CompareToUtils.nullSafeComparator(this,t);
+        if (t instanceof IPersoon)
+        {
+                IPersoon p = (IPersoon) t;
+                if (!(CompareToUtils.nullSafeComparator(birthDate,p.getBirthDate()) == 0)) return CompareToUtils.nullSafeComparator(birthDate,p.getBirthDate());
                 else {
-                    if (!(CompareToUtils.nullSafeComparator(familyname,p.familyname)==0)) return CompareToUtils.nullSafeComparator(familyname,p.familyname);
-                    else return CompareToUtils.nullSafeComparator(firstname,p.firstname);
+                    if (!(CompareToUtils.nullSafeComparator(familyname,p.getFamilyName())==0)) return CompareToUtils.nullSafeComparator(familyname,p.getFamilyName());
+                    else return CompareToUtils.nullSafeComparator(firstname,p.getFirstName());
                 }
         }
+        else return CompareToUtils.nullSafeComparator(this,t);
+    }
+
+    @Override
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstname;
+    }
+
+    @Override
+    public String getFamilyName() {
+        return familyname;
     }
 
     /**
@@ -77,7 +87,7 @@ public class Persoon implements Comparable {
     /**
      * * Two persons are equal when:
      * - their BSN , firstname and familay name are equal
-     * @param Other
+     * @param other The object to compare
      * @return
      */
     private boolean equalFirstCase(Object other) {
@@ -104,31 +114,14 @@ public class Persoon implements Comparable {
                         &&  dateValidated;
     }
 
-    /**
-     * Two persons are equal when:
-     * - their BSN , firstname and familay name are equal
-     * or
-     * - their firstname, familyname, birthdate, birthplace and birthcountry are the sames
-     * @param other The object to compare with
-     * @return the logical value of the compare based on the above conditions
-     */
     @Override
     public boolean equals(Object other) {
         return equalFirstCase(other) || equalSecondCase(other);
     }
 
-    /**
-     * * Two persons are equal when:
-     * - their BSN , firstname and familay name are equal
-     * or
-     * - their firstname, familyname, birthdate, birthplace and birthcountry are the sames
-     * The Hashcode must align with this, the only two parameters in the set are firstname and last name
-     * @return the hashcode
-     */
+
     @Override
     public int hashCode() {
-        int result = 31 * (familyname != null ? familyname.hashCode() : 0);
-        result = 31 * result + (firstname != null ? firstname.hashCode() : 0);
-        return result;
+        return (firstname + familyname).hashCode();
     }
 }

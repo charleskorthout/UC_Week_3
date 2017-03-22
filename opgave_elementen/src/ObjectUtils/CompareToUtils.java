@@ -1,5 +1,8 @@
 package ObjectUtils;
 
+import persoon.Persoon;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * this class contains methods to check specific aspects of the
  * compareTo method of Comparable objects.
@@ -38,22 +41,27 @@ public class CompareToUtils {
         return ((x.compareTo(y) > 0) && (y.compareTo(z) > 0 ) && ( x.compareTo(z) > 0 ));
     }
 
-
     /**
      * Utility function to compare with null safe
      * @param x item 1
      * @param y item 2
      * @return icompare result
      */
-    public static int nullSafeComparator(Comparable x, Comparable y) {
+    public static int nullSafeComparator(Object x, Object y) {
         if (x == null ^ y == null) {
             return (x == null) ? -1 : 1;
         }
         if (x == null && y == null) {
             return 0;
         }
-        return x.compareTo(y);
+        if ((x instanceof Comparable) && (y instanceof Comparable)) {
+            return ((Comparable)x).compareTo((Comparable)y);
+        }
+        else {
+            throw new NotImplementedException(); // should not happen, we are comparing apples and oranges..
+        }
     }
+
 
     /**
      * If the x compares throws an exception then also y  comapred with null must throw an exception.
@@ -95,6 +103,6 @@ public class CompareToUtils {
         if (x.compareTo(y) == 0 ) {
             return x.equals(y);
         }
-        else return false;
+        else return true; // we do not care if they are not equal...
     }
 }

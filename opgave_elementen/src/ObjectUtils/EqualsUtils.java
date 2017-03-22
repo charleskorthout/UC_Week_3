@@ -25,7 +25,8 @@ public class EqualsUtils {
      *
      */
     public static boolean testSymmetry(Object p, Object q) {
-        return (p.equals(q) ? q.equals(p) : false);
+
+        return (p.equals(q) ? q.equals(p) : true);
     }
 
     /**
