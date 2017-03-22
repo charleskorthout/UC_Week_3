@@ -617,7 +617,8 @@ De methode bestaat uit drie componenten:
 #### Unit testen
 We hebben nu voldoende munitie om alle unit testen te laten slagen.
 
-![testresultaat](/img/2017-03-22_22-06-56.jpg )
+![ ](./img/2017-03-22_22-06-56.jpg)
+
 ## Opdracht 1.3
 Maak unittesten om add, contains, delete/remove en size te testen als je bovenstaande Persoon objecten in een List implementatie stopt. Verklaar het gedrag dat je ziet en pas je tests en code aan indien nodig. Hou bij welke wijzigingen je uitgevoerd hebt.
 
