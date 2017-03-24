@@ -648,6 +648,7 @@ List<IPersoon> personen;
     }
         
 ```
+### Test om persoon toe te voegen aan collectie
 
 De eerste test is of we personen toe kunnen voegen tot de lijst. In bovenstaande hebben we 2 implementaties van het type Persoon.
 
@@ -670,6 +671,89 @@ De eerste test is of we personen toe kunnen voegen tot de lijst. In bovenstaande
 Het volgende screenshot toont het resultaat
 
 ![ ](./img/2017-03-22_22-52-30.jpg) 
+
+### Test om Docent & Persoon of Student en Persoon toe te voegen aan collectie
+
+``` java
+
+    /**
+     * Simpel test if we can add an person and a docent
+     */
+    @Test
+    public void testAddPersonAndDocentToList(){
+        personen.clear();
+        int expected = 1;
+        personen.add(p1);
+        int actual = personen.size();
+        assertEquals(expected,  actual);
+        expected = 2;
+        personen.add(p5);
+        actual = personen.size();
+        assertEquals(expected,  actual);
+    }
+
+    /**
+     * Simpel test if we can add an person and a student
+     */
+    @Test
+    public void testAddPersonAndStudenttToList(){
+        personen.clear();
+        int expected = 1;
+        personen.add(p1);
+        int actual = personen.size();
+        assertEquals(expected,  actual);
+        expected = 2;
+        personen.add(p3);
+        actual = personen.size();
+        assertEquals(expected,  actual);
+    }
+
+```
+
+### Test of de lijst na toevoeging zowel de persoon, de docent en de student heeft
+Met deze test willen we kijken of wanneer we de diverse elementen toevoegen, we ze ook kunnen terughalen uit de collectie
+
+``` java
+    @Test
+    public void testContainsForSameDocent_Student_Person(){
+        personen.clear();
+        boolean expected = true;
+        personen.add(p1); // Erik as persoon
+        personen.add(p5); // Erik as docent
+        personen.add(p7); // Erik as student
+        boolean actual = personen.contains(p1);
+        assertEquals(expected,  actual);
+        actual = personen.contains(p5);
+        assertEquals(expected,  actual);
+        actual = personen.contains(p7);
+        assertEquals(expected,  actual);
+    }
+```
+
+### Test of de lijst de juiste types vind
+MEt deze test willen we kijken of we de juiste types vinden
+
+``` java
+    @Test
+    public void testContainsSameDocent_Student_Person_with_proper_type(){
+        personen.clear();
+        boolean expected = true;
+        personen.add(p1); // Erik as persoon
+        personen.add(p5); // Erik as docent
+        personen.add(p7); // Erik as student
+        IPersoon p1a = personen.get(0);
+        IPersoon p5a = personen.get(1);
+        IPersoon p7a = personen.get(2);
+        boolean actual = ((p1 == p1a) && (p1a instanceof Persoon));
+        assertEquals(expected,  actual);
+        actual = ((p5 == p5a) && (p5a instanceof Docent));
+        assertEquals(expected,  actual);
+        actual = ((p7 == p7a) && (p7a instanceof Student));
+        assertEquals(expected,  actual);
+    }
+```
+
+![ ](./img/2017-03-24_15-04-39.jpg)
 
 ## Opdracht 1.4
 Stop nu de bovenstaande Objecten uit 1.1 in een HashSet implementatie. Maak een unittest om te laten zien of bovenstaande methoden van de collectie ook werken (Voeg hiertoe methoden toe in HashCodeUtils om het hashcode contract aan te tonen, en gebruik deze in je tests.). 
