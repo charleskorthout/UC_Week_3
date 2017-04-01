@@ -87,25 +87,18 @@ public class Persoon implements IPersoon{
     /**
      * * Two persons are equal when:
      * - their BSN , firstname and familay name are equal
-     * @param other The object to compare
+     * @param persoon The persoons object to compare
      * @return
      */
-    private boolean equalFirstCase(Object other) {
-        if (this == other) return true;                 // If we are comparing with myself return true
-        if (!(other instanceof Persoon)) return false;  // if we are not a Persoon return false
-
-        Persoon persoon = (Persoon) other;              // we are an instance of Peroon so perform a cast
+    private boolean equalFirstCase(Persoon persoon) {
         boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
         // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
         return ((BSN == persoon.BSN) && nameValidated);
     }
 
 
-    private boolean equalSecondCase(Object other) {
-        if (this == other) return true;                 // If we are comparing with myself return true
-        if (!(other instanceof Persoon)) return false;  // if we are not a Persoon return false
+    private boolean equalSecondCase(Persoon persoon) {
 
-        Persoon persoon = (Persoon) other;              // we are an instance of Peroon so perform a cast
         boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
         boolean dateValidated = birthDate != null ? birthDate.equals(persoon.birthDate) : persoon.birthDate == null;
         return nameValidated
@@ -116,12 +109,20 @@ public class Persoon implements IPersoon{
 
     @Override
     public boolean equals(Object other) {
-        return equalFirstCase(other) || equalSecondCase(other);
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a IPersoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return equalFirstCase(opersoon.getPersoon()) || equalSecondCase(opersoon.getPersoon());
     }
 
 
     @Override
     public int hashCode() {
         return (firstname + familyname).hashCode();
+    }
+
+
+    public Persoon getPersoon() {
+        return this;
     }
 }

@@ -800,7 +800,333 @@ Maak een unittest, waarbij je alle persoon objecten (p1-p6) ieder met elkaar ver
 | P6       | P5          |               |                  |
 | P6       | P6          |               |                  |
 
+### Helper om de bij te houden om welk type persoon het gaat
+Om de tabel te maken moeten we naast de naam ook bijhouden welke persoon het is. Om dit mogelijk te maken maken we een helper klas, die ook de persoon zoals hij in de test file staat kent
+De klasse heeft als constructor onze IPersoon en een extra waarde om de persoonscode bij te kunnen houden.
+De print functie visualiseert de code dan tussen ronde haken, de print functie is ook aangepast in een opmaak voor markdown formaat.
+
+``` java 
+private class Pair<X extends IPersoon,Y> {
+        private X x_;
+        private Y y_;
+        public Pair(X x, Y y) {
+            x_ = x;
+            y_ = y;
+        }
+
+        public X fst() {
+            return x_;
+        }
+
+        public Y snd() {
+            return y_;
+        }
+
+        public void print(Pair p2){
+
+            System.out.println("" + x_.getFirstName() + " " + x_.getFamilyName() + "(" +y_.toString() + ") | "
+                                  + p2.fst().getFirstName() + " " + p2.fst().getFamilyName()+ "(" + p2.snd().toString() + ") | "
+                                  + x_.equals(p2.fst()) + " | " + x_.compareTo(p2.fst()));
+        }
+    }
+
+```
+We kunnen nu aan de aanmaak van de tabel gaan werken. Dit is recht-to-rechtaan, het aanmaken van een lijst van personen en alle personen met elkaar vergelijken.
+
+```java 
+@Test
+    public void exercise1_7() {
+        List<Pair<IPersoon,String>> personen = new ArrayList<>();
+        personen.add(new Pair(p1,"p1")); 
+        personen.add(new Pair(p2,"p2")); 
+        personen.add(new Pair(p3,"p3")); 
+        personen.add(new Pair(p4,"p4")); 
+        personen.add(new Pair(p5,"p5")); 
+        personen.add(new Pair(p6,"p6")); 
+        personen.add(new Pair(p7,"p7")); 
+        System.out.println("|-- Persoon1 | Persoon2 | Equals | Compare ");
+        personen
+            .stream()
+            .forEach((x) -> personen
+                            .stream()
+                            .forEach( (y) -> x.print(y)));
+        assertTrue(true);
+    }
+```
+
+Dit levert het volgende resultaat op 
+
+| Persoon1 |	Persoon2 |	Equals (T/F) | compareTo(+,0,-) |
+|:--------:|:-----------:|:-------------:|:----------------:|
+| erik schriek(p1) | erik schriek(p1) | true | 0 |
+| erik schriek(p1) | tim toma(p2) | false | -1 |
+| erik schriek(p1) | tim toma(p3) | false | -1 |
+| erik schriek(p1) | newey newton(p4) | false | -1 |
+| erik schriek(p1) | erik schriek(p5) | false | 0 |
+| erik schriek(p1) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p1) | erik schriek(p7) | false | 0 |
+| tim toma(p2) | erik schriek(p1) | false | 1 |
+| tim toma(p2) | tim toma(p2) | true | 0 |
+| tim toma(p2) | tim toma(p3) | false | 0 |
+| tim toma(p2) | newey newton(p4) | false | -1 |
+| tim toma(p2) | erik schriek(p5) | false | 1 |
+| tim toma(p2) | nico kuijpers(p6) | false | -1 |
+| tim toma(p2) | erik schriek(p7) | false | 1 |
+| tim toma(p3) | erik schriek(p1) | false | 1 |
+| tim toma(p3) | tim toma(p2) | true | 0 |
+| tim toma(p3) | tim toma(p3) | false | 0 |
+| tim toma(p3) | newey newton(p4) | false | -1 |
+| tim toma(p3) | erik schriek(p5) | false | 1 |
+| tim toma(p3) | nico kuijpers(p6) | false | -1 |
+| tim toma(p3) | erik schriek(p7) | false | 1 |
+| newey newton(p4) | erik schriek(p1) | false | 1 |
+| newey newton(p4) | tim toma(p2) | false | 1 |
+| newey newton(p4) | tim toma(p3) | false | 1 |
+| newey newton(p4) | newey newton(p4) | false | 0 |
+| newey newton(p4) | erik schriek(p5) | false | 1 |
+| newey newton(p4) | nico kuijpers(p6) | false | 1 |
+| newey newton(p4) | erik schriek(p7) | false | 1 |
+| erik schriek(p5) | erik schriek(p1) | true | 0 |
+| erik schriek(p5) | tim toma(p2) | false | -1 |
+| erik schriek(p5) | tim toma(p3) | false | -1 |
+| erik schriek(p5) | newey newton(p4) | false | -1 |
+| erik schriek(p5) | erik schriek(p5) | false | 0 |
+| erik schriek(p5) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p5) | erik schriek(p7) | false | 0 |
+| nico kuijpers(p6) | erik schriek(p1) | false | 1 |
+| nico kuijpers(p6) | tim toma(p2) | false | 1 |
+| nico kuijpers(p6) | tim toma(p3) | false | 1 |
+| nico kuijpers(p6) | newey newton(p4) | false | -1 |
+| nico kuijpers(p6) | erik schriek(p5) | false | 1 |
+| nico kuijpers(p6) | nico kuijpers(p6) | false | 0 |
+| nico kuijpers(p6) | erik schriek(p7) | false | 1 |
+| erik schriek(p7) | erik schriek(p1) | true | 0 |
+| erik schriek(p7) | tim toma(p2) | false | -1 |
+| erik schriek(p7) | tim toma(p3) | false | -1 |
+| erik schriek(p7) | newey newton(p4) | false | -1 |
+| erik schriek(p7) | erik schriek(p5) | false | 0 |
+| erik schriek(p7) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p7) | erik schriek(p7) | false | 0 |
+
+
 Is het resultaat volgens je verwachtingen? Verklaar je antwoord.
+### Evaluatie van printout
+De resultaten zijn absoluut vreemd. Dit is bijvoorbeeld heel duidelijk in :
+
+| Persoon1 |	Persoon2 |	Equals (T/F) | compareTo(+,0,-) |
+|:--------:|:-----------:|:-------------:|:----------------:|
+| erik schriek(p7) | erik schriek(p7) | false | 0 |
+
+De vergelijkingsfuntie geeft de correcte uitvoer, maar de gelijk aan functie geeft een foute waarde.
+
+Een andere vreemde waarde is 
+
+| Persoon1 |	Persoon2 |	Equals (T/F) | compareTo(+,0,-) |
+|:--------:|:-----------:|:-------------:|:----------------:|
+| tim toma(p2) | tim toma(p2) | true | 0 |
+| tim toma(p2) | tim toma(p3) | false | 0 |
+
+Het lijkt of de gelijk aan functie niet goed geimplementeerd is.
+
+### Refactor equals voor Persoon
+De equals methode is duidelijk fout. Laten we nogmaals kijken wat we hebben gemaakt .
+
+``` java 
+/**
+     * * Two persons are equal when:
+     * - their BSN , firstname and familay name are equal
+     * @param other The object to compare
+     * @return
+     */
+    private boolean equalFirstCase(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof Persoon)) return false;  // if we are not a Persoon return false
+
+        Persoon persoon = (Persoon) other;              // we are an instance of Peroon so perform a cast
+        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
+        // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
+        return ((BSN == persoon.BSN) && nameValidated);
+    }
+
+
+    private boolean equalSecondCase(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof Persoon)) return false;  // if we are not a Persoon return false
+
+        Persoon persoon = (Persoon) other;              // we are an instance of Peroon so perform a cast
+        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
+        boolean dateValidated = birthDate != null ? birthDate.equals(persoon.birthDate) : persoon.birthDate == null;
+        return nameValidated
+                        &&  compStrMember(birthPlace,persoon.birthPlace)
+                        &&  compStrMember(birthCountry, persoon.birthCountry)
+                        &&  dateValidated;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return equalFirstCase(other) || equalSecondCase(other);
+    }
+```
+
+en hoe we de methode aanroepn vanuit bijvoorbeeld Docent
+
+```java 
+@Override
+    public boolean equals(Object o) {
+        return persoon.equals(o);
+    }
+```
+
+Waarbij de variabele persoon gezet wordt in de constructor van persoon. Dit gaat duidelijk fout.
+
+Laten we eerst de redundante regels uit de twee cases halen en in de equals methode van Persoon stoppen. De cases gaan hierna alleen nog maar personen vergelijken.
+
+``` java 
+/**
+     * * Two persons are equal when:
+     * - their BSN , firstname and familay name are equal
+     * @param persoon The persoons object to compare
+     * @return
+     */
+    private boolean equalFirstCase(Persoon persoon) {
+        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
+        // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
+        return ((BSN == persoon.BSN) && nameValidated);
+    }
+
+
+    private boolean equalSecondCase(Persoon persoon) {
+        
+        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
+        boolean dateValidated = birthDate != null ? birthDate.equals(persoon.birthDate) : persoon.birthDate == null;
+        return nameValidated
+                        &&  compStrMember(birthPlace,persoon.birthPlace)
+                        &&  compStrMember(birthCountry, persoon.birthCountry)
+                        &&  dateValidated;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof Persoon)) return false;  // if we are not a Persoon return false
+        Persoon persoon = (Persoon) other;              // we are an instance of Peroon so perform a cast        
+        return equalFirstCase(persoon) || equalSecondCase(persoon);
+    }
+
+```
+
+Het probleem wat we nu hebben is dat bijvoorbeeld Docent geen instance is van persoon, waardoor de controle op instance zo niet werkt.
+We moeten op e.o.a. manier toegang krijgen tot de informatie van persoon. Laten we een extra methode toevoegen aan IPersoon
+
+``` java 
+/**
+     * Returns the person information needs to be implemented.
+     * @return the person information
+     */
+    Persoon getPersoon();
+
+```
+De volgende stap is om de methode te implemeteren in de overervende klassen.
+
+#### Persoon
+
+```java 
+ public Persoon getPersoon() {
+        return this;
+    }
+```
+Hier moeten we ook de equals methode aanpassen
+
+```java
+@Override
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a IPersoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return equalFirstCase(opersoon.getPersoon()) || equalSecondCase(opersoon.getPersoon());
+    }
+
+```
+We testen nu of we te maken hebben met een implementatie van IPersoon en indien dit het geval is gebruiken we in de beide cases de getPersoon methode
+
+#### Docent
+
+```java
+@Override
+    public Persoon getPersoon() {
+        return persoon;
+    }
+
+```
+
+Ook de equals methode moeten we aanpassen, deze wordt nu:
+
+```java
+@Override
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a Persoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return persoon.equals(opersoon);
+    }
+
+```
+
+De implementatie in student is nu vergelijkbaar.
+
+#### Tabel uitvoer na aanpassingen
+
+| Persoon1 |	Persoon2 |	Equals (T/F) | compareTo(+,0,-) |
+|:--------:|:-----------:|:-------------:|:----------------:|
+| erik schriek(p1) | erik schriek(p1) | true | 0 |
+| erik schriek(p1) | tim toma(p2) | false | -1 |
+| erik schriek(p1) | tim toma(p3) | false | -1 |
+| erik schriek(p1) | newey newton(p4) | false | -1 |
+| erik schriek(p1) | erik schriek(p5) | true | 0 |
+| erik schriek(p1) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p1) | erik schriek(p7) | true | 0 |
+| tim toma(p2) | erik schriek(p1) | false | 1 |
+| tim toma(p2) | tim toma(p2) | true | 0 |
+| tim toma(p2) | tim toma(p3) | true | 0 |
+| tim toma(p2) | newey newton(p4) | false | -1 |
+| tim toma(p2) | erik schriek(p5) | false | 1 |
+| tim toma(p2) | nico kuijpers(p6) | false | -1 |
+| tim toma(p2) | erik schriek(p7) | false | 1 |
+| tim toma(p3) | erik schriek(p1) | false | 1 |
+| tim toma(p3) | tim toma(p2) | true | 0 |
+| tim toma(p3) | tim toma(p3) | true | 0 |
+| tim toma(p3) | newey newton(p4) | false | -1 |
+| tim toma(p3) | erik schriek(p5) | false | 1 |
+| tim toma(p3) | nico kuijpers(p6) | false | -1 |
+| tim toma(p3) | erik schriek(p7) | false | 1 |
+| newey newton(p4) | erik schriek(p1) | false | 1 |
+| newey newton(p4) | tim toma(p2) | false | 1 |
+| newey newton(p4) | tim toma(p3) | false | 1 |
+| newey newton(p4) | newey newton(p4) | true | 0 |
+| newey newton(p4) | erik schriek(p5) | false | 1 |
+| newey newton(p4) | nico kuijpers(p6) | false | 1 |
+| newey newton(p4) | erik schriek(p7) | false | 1 |
+| erik schriek(p5) | erik schriek(p1) | true | 0 |
+| erik schriek(p5) | tim toma(p2) | false | -1 |
+| erik schriek(p5) | tim toma(p3) | false | -1 |
+| erik schriek(p5) | newey newton(p4) | false | -1 |
+| erik schriek(p5) | erik schriek(p5) | true | 0 |
+| erik schriek(p5) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p5) | erik schriek(p7) | true | 0 |
+| nico kuijpers(p6) | erik schriek(p1) | false | 1 |
+| nico kuijpers(p6) | tim toma(p2) | false | 1 |
+| nico kuijpers(p6) | tim toma(p3) | false | 1 |
+| nico kuijpers(p6) | newey newton(p4) | false | -1 |
+| nico kuijpers(p6) | erik schriek(p5) | false | 1 |
+| nico kuijpers(p6) | nico kuijpers(p6) | true | 0 |
+| nico kuijpers(p6) | erik schriek(p7) | false | 1 |
+| erik schriek(p7) | erik schriek(p1) | true | 0 |
+| erik schriek(p7) | tim toma(p2) | false | -1 |
+| erik schriek(p7) | tim toma(p3) | false | -1 |
+| erik schriek(p7) | newey newton(p4) | false | -1 |
+| erik schriek(p7) | erik schriek(p5) | true | 0 |
+| erik schriek(p7) | nico kuijpers(p6) | false | -1 |
+| erik schriek(p7) | erik schriek(p7) | true | 0 |
 
 
 ## Opdracht 1.8

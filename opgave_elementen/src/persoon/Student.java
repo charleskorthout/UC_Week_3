@@ -34,13 +34,21 @@ public class Student implements IPersoon{
     }
 
     @Override
-    public boolean equals(Object o){
-        return persoon.equals(o);
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a Persoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return persoon.equals(opersoon);
     }
 
     @Override
     public int compareTo(Object o) {
         return persoon.compareTo(o);
+    }
+
+    @Override
+    public Persoon getPersoon() {
+        return persoon;
     }
 
     @Override

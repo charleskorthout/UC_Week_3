@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import ObjectUtils.HashCodeUtils;
+import org.apache.velocity.util.ArrayListWrapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -32,6 +33,7 @@ public class PersoonTest {
 
     IPersoon p1, p2, p3, p4, p5, p6, p7;
     List<IPersoon> personen;
+
 
     public PersoonTest() {
     }
@@ -195,4 +197,72 @@ public class PersoonTest {
         actual = ((p7 == p7a) && (p7a instanceof Student));
         assertEquals(expected,  actual);
     }
+
+    @Test
+    public void createCompareAllPersons(){
+        personen.clear();
+        boolean expected = true;
+        personen.add(p1);
+        personen.add(p2);
+        personen.add(p3);
+        personen.add(p4);
+        personen.add(p5);
+        personen.add(p6);
+        personen.add(p7);
+        IPersoon p1a = personen.get(0);
+        IPersoon p5a = personen.get(1);
+        IPersoon p7a = personen.get(2);
+        boolean actual = ((p1 == p1a) && (p1a instanceof Persoon));
+        assertEquals(expected,  actual);
+        actual = ((p5 == p5a) && (p5a instanceof Docent));
+        assertEquals(expected,  actual);
+        actual = ((p7 == p7a) && (p7a instanceof Student));
+        assertEquals(expected,  actual);
+    }
+
+    private class Pair<X extends IPersoon,Y> {
+        private X x_;
+        private Y y_;
+        public Pair(X x, Y y) {
+            x_ = x;
+            y_ = y;
+        }
+
+        public X fst() {
+            return x_;
+        }
+
+        public Y snd() {
+            return y_;
+        }
+
+        public void print(Pair p2){
+
+            System.out.println("| " + x_.getFirstName() + " " + x_.getFamilyName() + "(" +y_.toString() + ") | "
+                                  + p2.fst().getFirstName() + " " + p2.fst().getFamilyName()+ "(" + p2.snd().toString() + ") | "
+                                  + x_.equals(p2.fst()) + " | " + x_.compareTo(p2.fst()) + " |");
+        }
+    }
+
+    @Test
+    public void exercise1_7() {
+        List<Pair<IPersoon,String>> personen = new ArrayList<>();
+        personen.add(new Pair(p1,"p1"));
+        personen.add(new Pair(p2,"p2"));
+        personen.add(new Pair(p3,"p3"));
+        personen.add(new Pair(p4,"p4"));
+        personen.add(new Pair(p5,"p5"));
+        personen.add(new Pair(p6,"p6"));
+        personen.add(new Pair(p7,"p7"));
+        System.out.println("| Persoon1 |\tPersoon2 |\tEquals (T/F) | compareTo(+,0,-) |");
+        System.out.println("|:--------:|:-----------:|:-------------:|:----------------:|");
+        personen
+            .stream()
+            .forEach((x) -> personen
+                            .stream()
+                            .forEach( (y) -> x.print(y)));
+        assertTrue(true);
+    }
+
+
 }
