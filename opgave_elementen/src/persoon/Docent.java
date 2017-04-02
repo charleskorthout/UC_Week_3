@@ -48,11 +48,6 @@ public class Docent implements IPersoon {
     }
 
     @Override
-    public Persoon getPersoon() {
-        return persoon;
-    }
-
-    @Override
     public Date getBirthDate() {
         return persoon.getBirthDate();
     }
@@ -65,6 +60,26 @@ public class Docent implements IPersoon {
     @Override
     public String getFamilyName() {
         return persoon.getFamilyName();
+    }
+
+    @Override
+    public String getBirthPlace() {
+        return persoon.getBirthPlace();
+    }
+
+    @Override
+    public String getBirthCountry() {
+        return persoon.getBirthCountry();
+    }
+
+    @Override
+    public long getBSN() {
+        return persoon.getBSN();
+    }
+
+    @Override
+    public void setBSN(long BSN) {
+            persoon.setBSN(BSN);
     }
 
 

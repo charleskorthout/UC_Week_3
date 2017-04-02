@@ -73,6 +73,16 @@ public class Persoon implements IPersoon{
         return familyname;
     }
 
+    @Override
+    public String getBirthPlace() {
+        return birthPlace;
+    }
+
+    @Override
+    public String getBirthCountry() {
+        return birthCountry;
+    }
+
     /**
      * helper method to compare two strings
      * @param left the left hand string
@@ -90,20 +100,20 @@ public class Persoon implements IPersoon{
      * @param persoon The persoons object to compare
      * @return
      */
-    private boolean equalFirstCase(Persoon persoon) {
-        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
+    private boolean equalFirstCase(IPersoon persoon) {
+        boolean nameValidated = compStrMember(firstname, persoon.getFirstName()) &&  compStrMember(familyname, persoon.getFamilyName());
         // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
-        return ((BSN == persoon.BSN) && nameValidated);
+        return ((BSN == persoon.getBSN()) && nameValidated);
     }
 
 
-    private boolean equalSecondCase(Persoon persoon) {
+    private boolean equalSecondCase(IPersoon persoon) {
 
-        boolean nameValidated = compStrMember(firstname, persoon.firstname) &&  compStrMember(familyname, persoon.familyname);
-        boolean dateValidated = birthDate != null ? birthDate.equals(persoon.birthDate) : persoon.birthDate == null;
+        boolean nameValidated = compStrMember(firstname, persoon.getFirstName()) &&  compStrMember(familyname, persoon.getFamilyName());
+        boolean dateValidated = birthDate != null ? birthDate.equals(persoon.getBirthDate()) : persoon.getBirthDate() == null;
         return nameValidated
-                        &&  compStrMember(birthPlace,persoon.birthPlace)
-                        &&  compStrMember(birthCountry, persoon.birthCountry)
+                        &&  compStrMember(birthPlace,persoon.getBirthPlace())
+                        &&  compStrMember(birthCountry, persoon.getBirthCountry())
                         &&  dateValidated;
     }
 
@@ -112,7 +122,7 @@ public class Persoon implements IPersoon{
         if (this == other) return true;                 // If we are comparing with myself return true
         if (!(other instanceof IPersoon)) return false;  // if we are not a IPersoon return false
         IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
-        return equalFirstCase(opersoon.getPersoon()) || equalSecondCase(opersoon.getPersoon());
+        return equalFirstCase(opersoon) || equalSecondCase(opersoon);
     }
 
 
@@ -121,8 +131,4 @@ public class Persoon implements IPersoon{
         return (firstname + familyname).hashCode();
     }
 
-
-    public Persoon getPersoon() {
-        return this;
-    }
 }

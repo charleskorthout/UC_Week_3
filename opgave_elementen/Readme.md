@@ -1128,7 +1128,152 @@ De implementatie in student is nu vergelijkbaar.
 | erik schriek(p7) | nico kuijpers(p6) | false | -1 |
 | erik schriek(p7) | erik schriek(p7) | true | 0 |
 
+#### enable the getters from Persoon in IPersoon
+De oplossing zoals hierboven is bedroevend. Voor de gelijkheidsvergelijking hebben we de getPersoon gedefinieerd in de interface die een type Persoon terug geeft.
 
+Een verbetering is als we deze gehele methode laten verdwijnen en alle velden in de constructor, en voor de BSN beschikbaar stellen in de interface.
+Enkele velden waren al opgenomen voor de compareTo methode
+``` java 
+ // properties required to enable the compareTo for persoon
+    Date getBirthDate();
+    String getFirstName();
+    String getFamilyName();
+    // add the rest of the constructor parameters to implement equals in Persoon..
+    String getBirthPlace(); 
+    String getBirthCountry();
+    // BSN
+    public long getBSN();
+    public void setBSN(long BSN);
+```
+
+We passen nu de implementatie klassen Persoon, Docent en Student aan om deze methode te implementeren.
+
+Allereerst Persoon
+``` java
+    @Override
+    public String getBirthPlace() {
+        return birthPlace;
+    }
+
+    @Override
+    public String getBirthCountry() {
+        return birthCountry;
+    }
+
+```
+
+De klasse Docent en Student worden nu appeltje-eitje en de methode aanroep gebruikt de methode binnen de persoon
+zowel voor Docent alsbij Student.
+
+``` java 
+    @Override
+    public String getBirthPlace() {
+        return persoon.getBirthPlace();
+    }
+
+    @Override
+    public String getBirthCountry() {
+        return persoon.getBirthCountry();
+    }
+
+    @Override
+    public long getBSN() {
+        return persoon.getBSN();
+    }
+
+    @Override
+    public void setBSN(long BSN) {
+            persoon.setBSN(BSN);
+    }
+
+```
+De volgende stap is om in de getPersoon methode te verwijderen en de equals de vorige geimplementeerde methodes te gaan gebruiken.
+
+``` java 
+/**
+     * * Two persons are equal when:
+     * - their BSN , firstname and familay name are equal
+     * @param persoon The persoons object to compare
+     * @return
+     */
+    private boolean equalFirstCase(IPersoon persoon) {
+        boolean nameValidated = compStrMember(firstname, persoon.getFirstName()) &&  compStrMember(familyname, persoon.getFamilyName());
+        // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
+        return ((BSN == persoon.getBSN()) && nameValidated);
+    }
+
+
+    private boolean equalSecondCase(IPersoon persoon) {
+
+        boolean nameValidated = compStrMember(firstname, persoon.getFirstName()) &&  compStrMember(familyname, persoon.getFamilyName());
+        boolean dateValidated = birthDate != null ? birthDate.equals(persoon.getBirthDate()) : persoon.getBirthDate() == null;
+        return nameValidated
+                        &&  compStrMember(birthPlace,persoon.getBirthPlace())
+                        &&  compStrMember(birthCountry, persoon.getBirthCountry())
+                        &&  dateValidated;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a IPersoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return equalFirstCase(opersoon) || equalSecondCase(opersoon);
+    }
+
+```
+
+![ ](./img/2017-04-02_9-01-22.jpg)
+
+Alle testen valideren nu. Nog steeds niet 100% gelukkig met de code, maar laat dat voor wat het is.
+
+``` java 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;                 // If we are comparing with myself return true
+        if (!(other instanceof IPersoon)) return false;  // if we are not a Persoon return false
+        IPersoon opersoon = (IPersoon) other;              // we are an instance of Peroon so perform a cast
+        return persoon.equals(opersoon);
+    }
+```
+Hierboven een voorbeeld van de equals in Docent, er staat veel te veel code in. Waarschijnlijk een optimalisatie is door de twee cases in persoon onder te brengen in een aparte utility klasse voor IPersoon en die dan overal aan te roepen.
+``` java
+    /**
+     * * Two persons are equal when:
+     * - their BSN , firstname and familay name are equal
+     * @param first The first persoons object to compare
+     * @param second The second persoon to compare
+     * @return
+     */
+    public static boolean testPersonOnBSNandNameEquals(IPersoon first, IPersoon second) {
+        boolean nameValidated = compStrMember(second.getFirstName(), second.getFirstName()) &&  compStrMember(first.getFamilyName(), second.getFamilyName());
+        // first Clause , a Primitative value (long) cannot be null so we can compare without any risk
+        return ((first.getBSN() == second.getBSN()) && nameValidated);
+    }
+
+
+    public static boolean testNameAndBirthDataEquals(IPersoon first, IPersoon second) {
+
+        boolean nameValidated = compStrMember(second.getFirstName(), second.getFirstName()) &&  compStrMember(first.getFamilyName(), second.getFamilyName());
+        boolean dateValidated = first.getBirthDate())!= null ? first.getBirthDate().equals(second.getBirthDate()) : second.getBirthDate() == null;
+        return nameValidated
+                        &&  compStrMember(first.getBirthPlace(),second.getBirthPlace())
+                        &&  compStrMember(first.getBirthCountry(), second.getBirthCountry())
+                        &&  dateValidated;
+    }
+```
+Wat extra controles moeten nog worden toegevoegd voor eventuele null waardes te testen, maar de body van de equals zou er dan als volgt uit kunnen zien. (bijvoorbeeld voor Docent)
+
+``` java
+@Override
+    public boolean equals(Object other) {
+        return PersoonHelper.testPersonOnBSNandNameEquals(this,other) 
+                || 
+               PersoonHelper.testNameAndBirthDataEquals(this,other)
+        ;
+    }
+
+```
 ## Opdracht 1.8
 Vergelijk nu van bovenstaande 6 objecten of zij aan het JAVA contract van equals voldoen (gebuik hiervoor de voorbeeld testcode van het klasvoorbeeld) Verklaar je antwoorden (lees hiertoe de PDF over “Effective JAVA Chapter3” van Joshua Bloch). Besteed aan het verklaren maximaal ½ uur.
 

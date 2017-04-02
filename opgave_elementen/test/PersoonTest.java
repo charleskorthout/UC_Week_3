@@ -203,11 +203,7 @@ public class PersoonTest {
         personen.clear();
         boolean expected = true;
         personen.add(p1);
-        personen.add(p2);
-        personen.add(p3);
-        personen.add(p4);
         personen.add(p5);
-        personen.add(p6);
         personen.add(p7);
         IPersoon p1a = personen.get(0);
         IPersoon p5a = personen.get(1);

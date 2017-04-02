@@ -36,14 +36,15 @@ public interface IPersoon extends Comparable {
      */
     int compareTo(Object other);
 
-    /**
-     * Returns the person information needs to be implemented.
-     * @return the person information
-     */
-    Persoon getPersoon();
-
     // properties required to enable the compareTo for persoon
     Date getBirthDate();
     String getFirstName();
     String getFamilyName();
-}
+    // add the rest of the constructor parameters to implement equals in Persoon..
+    String getBirthPlace();
+    String getBirthCountry();
+    // BSN
+    public long getBSN();
+    public void setBSN(long BSN);
+
+    }
